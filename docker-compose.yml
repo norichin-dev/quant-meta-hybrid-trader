@@ -1,15 +1,26 @@
+# ./docker-compose.yml
+#version: "3.9"
+
 services:
-  python:
-    build: ./python
+  app:
+    build: .
+    image: bitcoin_quant:latest
+    container_name: bitcoin_quant
+    working_dir: /usr/src/app
+
+    # .env を環境変数として注入（API_KEY / API_SECRETとか）
     env_file:
       - .env
-    image: bitcoin_quant:latest      # 独自イメージ名にしよ
-    container_name: bitcoin_quant
-    working_dir: /usr/src/app          # ここ基準にあわせる
+
+    # ホストのソースをコンテナにマウント
     volumes:
-      - ./python:/usr/src/app
-    ports:
-      - "8001:8000"
+      - .:/usr/src/app
+
+    # 必要なら外部公開ポート（Jupyterとか使うとき）
+    # ports:
+    #   - "8888:8888"
+
+    # 開発中はコンテナを生かしっぱなしにしておく
     tty: true
     stdin_open: true
     command: tail -f /dev/null
