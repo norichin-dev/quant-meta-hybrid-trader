@@ -1,0 +1,8 @@
+selenium
+beautifulsoup4
+pandas
+webdriver-manager
+fugashi[unidic-lite]
+wordcloud
+matplotlib
+japanize_matplotlib
