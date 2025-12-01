@@ -249,7 +249,7 @@ def main():
     for i, p in enumerate(future, 1):
         print(f"+{i} : {p:.3f}")
     # ---- 未来予測10本を時間軸に追加して描画 ----
-    future_steps = 10
+    future_steps = 100
     future_preds = forecast_future(
         model, feat_norm, target_mean, target_std, steps=future_steps
     )
