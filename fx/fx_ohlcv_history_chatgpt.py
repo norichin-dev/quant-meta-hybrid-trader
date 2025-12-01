@@ -7,7 +7,7 @@ import pandas as pd
 # BTC/JPY なら bitFlyerじゃなくBTC/JPYペアを提供してる取引所次第だけど、
 # とりあえず FX なら USD/JPY が鉄板
 SYMBOL = "USDJPY=X"       # yfinance のティッカー（USD/JPY）
-INTERVAL = "1m"           # "1m", "5m", "15m", "1h", "1d" など
+INTERVAL = "5m"           # "1m", "5m", "15m", "1h", "1d" など
 PERIOD = "max"            # "1d", "5d", "1mo", "3mo", "1y", "max" など
 
 OUT_CSV = f"yf_{SYMBOL.replace('=','')}_{INTERVAL}_{PERIOD}.csv"
