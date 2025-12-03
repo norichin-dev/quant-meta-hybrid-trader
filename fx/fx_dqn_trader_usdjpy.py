@@ -165,6 +165,10 @@ class DQN(nn.Module):
 # ====== メイン学習ループ ======
 
 def train_dqn():
+    print("train_dqn() start")
+
+    df = load_close_series()
+    print("df rows =", len(df))
     df = load_close_series()
     prices = df["close"].values
     env = TradingEnv(prices, state_len=STATE_LEN)
@@ -251,6 +255,7 @@ def train_dqn():
     eq_curve =_
 
     print("fx_dqn_trader_usdjpy.py imported, __name__ =", __name__)
+    print("train_dqn() end")
 
 def train_dqn():
     print("train_dqn() start")  # デバッグ用
