@@ -5,12 +5,15 @@
 # ・状態: 直近 N 本のリターン + 現ポジション
 # ・行動: -1 (ショート), 0 (ノーポジ), +1 (ロング)
 # ・報酬: ポジション × 価格変化 - 手数料
+# デバッグ用print入り版
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+print("fx_dqn_trader_usdjpy.py imported, __name__ =", __name__)
 
 # ====== 設定 ======
 CSV_FILE      = "fx/yf_USDJPYX_5m_max.csv"
@@ -36,9 +39,12 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.manual_seed(42)
 np.random.seed(42)
 
+print("Using device:", device)
+
 # ====== データ読み込み（closeだけ使う） ======
 
 def load_close_series():
+    print("[load_close_series] loading CSV:", CSV_FILE)
     df = pd.read_csv(CSV_FILE)
 
     if "Price" not in df.columns:
@@ -59,12 +65,14 @@ def load_close_series():
     df = df.dropna(subset=["close"])
 
     if USE_RESAMPLE:
+        print("[load_close_series] resampling:", RESAMPLE_RULE)
         df = df[["close"]].resample(RESAMPLE_RULE).last().dropna()
 
     if len(df) > MAX_POINTS:
         df = df.iloc[-MAX_POINTS:]
+        print(f"[load_close_series] trimmed to last {MAX_POINTS} rows")
 
-    print("Loaded rows:", len(df))
+    print("[load_close_series] final rows:", len(df))
     return df
 
 # ====== トレード環境 ======
@@ -78,6 +86,8 @@ class TradingEnv:
         self.max_t = len(self.returns) - 1
         self.position = 0  # -1,0,1
         self.t = None
+        print("[TradingEnv] init:",
+              f"len(prices)={len(self.prices)}, len(returns)={len(self.returns)}")
 
     def reset(self):
         self.t = self.reset_idx
@@ -168,13 +178,16 @@ def train_dqn():
     print("train_dqn() start")
 
     df = load_close_series()
-    print("df rows =", len(df))
-    df = load_close_series()
+    print("[train_dqn] df head:\n", df.head())
     prices = df["close"].values
+    print("[train_dqn] prices len =", len(prices))
+
     env = TradingEnv(prices, state_len=STATE_LEN)
 
     state_dim = STATE_LEN + 1  # リターンwindow + 現ポジション
     n_actions = 3              # -1,0,1 を {0,1,2} にマップ
+
+    print(f"[train_dqn] state_dim={state_dim}, n_actions={n_actions}")
 
     policy_net = DQN(state_dim, n_actions).to(device)
     target_net = DQN(state_dim, n_actions).to(device)
@@ -198,7 +211,8 @@ def train_dqn():
                 action_idx = np.random.randint(n_actions)
             else:
                 with torch.no_grad():
-                    s_t = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
+                    s_t = torch.tensor(state, dtype=torch.float32,
+                                       device=device).unsqueeze(0)
                     q_values = policy_net(s_t)
                     action_idx = int(torch.argmax(q_values, dim=1).item())
 
@@ -224,7 +238,10 @@ def train_dqn():
                     next_states_b, dones_b
                 ) = memory.sample(BATCH_SIZE)
 
-                q_vals = policy_net(states_b).gather(1, actions_b.unsqueeze(1)).squeeze(1)
+                q_vals = policy_net(states_b).gather(
+                    1, actions_b.unsqueeze(1)
+                ).squeeze(1)
+
                 with torch.no_grad():
                     next_q = target_net(next_states_b).max(1)[0]
                     target = rewards_b + GAMMA * next_q * (1 - dones_b)
@@ -252,19 +269,34 @@ def train_dqn():
     eval_env = TradingEnv(prices, state_len=STATE_LEN)
     state = eval_env.reset()
     equity = 1.0
-    eq_curve =_
+    eq_curve = [equity]
+    while True:
+        with torch.no_grad():
+            s_t = torch.tensor(state, dtype=torch.float32,
+                               device=device).unsqueeze(0)
+            q_values = policy_net(s_t)
+            action_idx = int(torch.argmax(q_values, dim=1).item())
+        action = action_idx - 1
+        next_state, reward, done, _ = eval_env.step(action)
+        equity *= (1.0 + reward)
+        eq_curve.append(equity)
+        state = next_state
+        if done:
+            break
 
-    print("fx_dqn_trader_usdjpy.py imported, __name__ =", __name__)
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 4))
+    plt.plot(eq_curve)
+    plt.title("DQN Trader Equity Curve")
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig("dqn_equity_curve.png")
+    print("Saved: dqn_equity_curve.png")
+
     print("train_dqn() end")
-
-def train_dqn():
-    print("train_dqn() start")  # デバッグ用
-    ...
-    print("train_dqn() end")    # デバッグ用
 
 
 if __name__ == "__main__":
     print("main block start")
     train_dqn()
     print("main block end")
-
