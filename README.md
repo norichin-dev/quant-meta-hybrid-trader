@@ -71,17 +71,16 @@ print("saved:", OUT_CSV)
 
 - 先頭・末尾数行と総行数を表示して、ちゃんと取れているか軽くチェック。  
 - 最後に `OUT_CSV` で指定したファイル名で **そのままCSV保存**。  
-- 生成されたCSVは、さっきの `quant_meta_hybrid_trader_v2.py` の  
+- 生成されたCSVは、さっきの `quant_meta_hybrid_trader.py` の  
   `PAIR_CSV_LIST` にそのまま突っ込んで使える想定。
 
 ---
 
 ## 使い方まとめ
 
-1. Python環境で `yfinance` と `pandas` をインストールしておく。  
+1. Python環境で `requirements.txt` をインストールしておく。  
 2. 必要なら `SYMBOL`, `INTERVAL`, `PERIOD` を好みのものに変更。  
 3. スクリプトを実行すると、カレントディレクトリに  
    `yf_〇〇〇_△△_□□.csv` が出力される。  
 4. そのCSVを学習・バックテスト用のデータとして使う。
 
-こんな感じで README に載せれば、「このスクリプトでデータ作ってから、全部乗せトレーダーに食わせる」という流れがわかりやすくなると思う！

@@ -1,6 +1,6 @@
-# quant_meta_hybrid_trader_v2.py
+# quant_meta_hybrid_trader.py
 #
-# noriちん専用・全部乗せ研究用トレーダーフレームワーク v2
+# 全部乗せ研究用トレーダーフレームワーク v2
 #
 # ★入ってる要素★
 # 1. マルチアセット（複数通貨ペア）
