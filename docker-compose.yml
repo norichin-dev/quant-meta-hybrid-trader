@@ -4,8 +4,8 @@
 services:
   app:
     build: .
-    image: bitcoin_quant:latest
-    container_name: bitcoin_quant
+    image: quant-meta-hybrid-trader:latest
+    container_name: quant-meta-hybrid-trader
     working_dir: /usr/src/app
 
     # .env を環境変数として注入（API_KEY / API_SECRETとか）
