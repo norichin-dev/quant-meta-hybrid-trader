@@ -1,3 +1,6 @@
+Follow me on [X (Twitter)](https://x.com/new__nori_3)
+
+
 ## yf_ohlcv_history.py とは？
 
 このスクリプトは、Yahoo! Finance から **USD/JPY の5分足ヒストリカルデータを全部ダウンロードして、CSVに保存するツール** だよ。  
