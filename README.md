@@ -239,7 +239,7 @@ v3 implements the following optimizations:
 ### 🔗 Links
 
 - **X (Twitter)**: [Follow me on X](https://x.com/)
-- **GitHub**: [View on GitHub](#)
+- **GitHub**: [View on GitHub](https://github.com/tomoaki-dev-jp)
 - **PyTorch Docs**: [pytorch.org](https://pytorch.org/)
 
 ---
