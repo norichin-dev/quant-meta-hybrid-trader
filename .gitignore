@@ -5,7 +5,7 @@ venv-local/
 env/
 __pycache__/
 *.pyc
-trash/*
+Trash/*
 *.csv
 *.png
 results/
